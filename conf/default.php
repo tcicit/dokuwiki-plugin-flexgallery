@@ -3,6 +3,7 @@
  * Options for the gallery plugin
  *
  * @author Dmitry Baikov <dsbaikov@gmail.com>
+ # @author Thomas Cigolla 
  */
 
 $conf['thumbnail_width']  = 280;
