@@ -1,4 +1,13 @@
-gallery Plugin for DokuWiki
+responsive gallery Plugin for DokuWiki
+
+New reponsive gallery Plugin for Dokuwiki based on gallery Plugin from
+Andras Gohr.
+
+This plugin uses flex boxes and work only with modern browsers.
+
+
+
+
 
 All documentation for this plugin can be found at
 http://www.dokuwiki.org/plugin:gallery
