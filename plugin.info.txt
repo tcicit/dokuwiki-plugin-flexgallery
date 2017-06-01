@@ -1,4 +1,4 @@
-base   fleygallery
+base   flexgallery
 author Thomas Cigolla (Andreas Gohr)
 email  tcicit@gmail.com
 date   2017-06-01
