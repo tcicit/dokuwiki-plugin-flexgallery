@@ -1,7 +1,7 @@
-base   gallery
-author Andreas Gohr
-email  andi@splitbrain.org
-date   2016-12-22
-name   Gallery Plugin
-desc   Creates a gallery of images from a namespace or RSS/ATOM feed
-url    http://www.dokuwiki.org/plugin:gallery
+base   flexgallery
+author Thomas Cigolla (Andreas Gohr)
+email  tcicit@gmail.com
+date   2017-06-01
+name   Flexgallery Plugin
+desc   Creates a reponsive gallery of images from a namespace or RSS/ATOM feed
+url    http://www.dokuwiki.org/plugin:flexgallery
