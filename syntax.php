@@ -3,6 +3,7 @@
  * Embed an flex image gallery
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @author     Thoams Cigolla <tcicit@gmail.com>
  * @author     Andreas Gohr <andi@splitbrain.org>
  * @author     Joe Lapp <joe.lapp@pobox.com>
  * @author     Dave Doyle <davedoyle.canadalawbook.ca>
