@@ -1,6 +1,6 @@
 <?php
 /**
- * Embed an image gallery
+ * Embed an flex image gallery
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Andreas Gohr <andi@splitbrain.org>
@@ -14,7 +14,7 @@ require_once(DOKU_PLUGIN.'syntax.php');
 require_once(DOKU_INC.'inc/search.php');
 require_once(DOKU_INC.'inc/JpegMeta.php');
 
-class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_flexgallery extends DokuWiki_Syntax_Plugin {
 
     /**
      * What kind of syntax are we?
@@ -42,7 +42,7 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
      * Connect pattern to lexer
      */
     function connectTo($mode) {
-        $this->Lexer->addSpecialPattern('\{\{gallery>[^}]*\}\}',$mode,'plugin_gallery');
+        $this->Lexer->addSpecialPattern('\{\{flexgallery>[^}]*\}\}',$mode,'plugin_flexgallery');
     }
 
     /**
@@ -50,7 +50,7 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
      */
     function handle($match, $state, $pos, Doku_Handler $handler){
         global $ID;
-        $match = substr($match,10,-2); //strip markup from start and end
+        $match = substr($match,14,-2); //strip markup from start and end 
 
         $data = array();
 
@@ -77,9 +77,9 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
         $data['th']       = $this->getConf('thumbnail_height');
         $data['iw']       = $this->getConf('image_width');
         $data['ih']       = $this->getConf('image_height');
-        $data['cols']     = $this->getConf('cols');
+//        $data['cols']     = $this->getConf('cols');
         $data['filter']   = '';
-        $data['lightbox'] = false;
+        $data['l ightbox'] = false;
         $data['direct']   = false;
         $data['showname'] = false;
         $data['showtitle'] = false;
@@ -91,7 +91,7 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
         $data['sort']     = $this->getConf('sort');
         $data['limit']    = 0;
         $data['offset']   = 0;
-        $data['paginate'] = 0;
+        // $data['paginate'] = 0;
 
         // parse additional options
         $params = $this->getConf('options').','.$params;
@@ -109,8 +109,8 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
                 $data['limit'] = $match[1];
             }elseif(preg_match('/^\+(\d+)$/',$param,$match)){
                 $data['offset'] = $match[1];
-            }elseif(is_numeric($param)){
-                $data['cols'] = (int) $param;
+//            }elseif(is_numeric($param)){
+//                $data['cols'] = (int) $param;
             }elseif(preg_match('/^~(\d+)$/',$param,$match)){
                 $data['paginate'] = $match[1];
             }elseif(preg_match('/^(\d+)([xX])(\d+)$/',$param,$match)){
@@ -148,7 +148,7 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
         global $ID;
         if($mode == 'xhtml'){
             $R->info['cache'] &= $data['cache'];
-            $R->doc .= $this->_gallery($data);
+            $R->doc .= $this->_flexgallery($data);
             return true;
         }elseif($mode == 'metadata'){
             $rel = p_get_metadata($ID,'relation',METADATA_RENDER_USING_CACHE);
@@ -332,7 +332,7 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
     /**
      * Does the gallery formatting
      */
-    function _gallery($data){
+    function _flexgallery($data){
         global $conf;
         global $lang;
         $ret = '';
@@ -345,145 +345,28 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
             return $ret;
         }
 
-        // prepare alignment
-        $align = '';
-        $xalign = '';
-        if($data['align'] == 1){
-            $align  = ' gallery_right';
-            $xalign = ' align="right"';
-        }
-        if($data['align'] == 2){
-            $align  = ' gallery_left';
-            $xalign = ' align="left"';
-        }
-        if($data['align'] == 3){
-            $align  = ' gallery_center';
-            $xalign = ' align="center"';
-        }
-        if(!$data['_single']){
-            if(!$align) $align = ' gallery_center'; // center galleries on default
-            if(!$xalign) $xalign = ' align="center"';
-        }
-
-        $page = 0;
-
-        // build gallery
-        if($data['_single']){
-            $ret .= $this->_image($files[0],$data);
-            $ret .= $this->_showname($files[0],$data);
-            $ret .= $this->_showtitle($files[0],$data);
-        }elseif($data['cols'] > 0){ // format as table
-            $close_pg = false;
-
-            $i = 0;
-            foreach($files as $img){
-
-                // new page?
-                if($data['paginate'] && ($i % $data['paginate'] == 0)){
-                     $ret .= '<div class="gallery_page gallery__'.$data['galid'].'" id="gallery__'.$data['galid'].'_'.(++$page).'">';
-                     $close_pg = true;
-                }
-
-                // new table?
-                if($i == 0 || ($data['paginate'] && ($i % $data['paginate'] == 0))){
-                    $ret .= '<table>';
-
-                }
-
-                // new row?
-                if($i % $data['cols'] == 0){
-                    $ret .= '<tr>';
-                }
-
-                // an image cell
-                $ret .= '<td>';
+        $i = 0;
+        foreach($files as $img){
+            if ($i == 0) {
+                $ret .= '<div class="flex-gallery">';  // start Table
+                $i++;
+            } else {
+                $ret .= '<div class="flex-gallery-cell">';   // start image cell
+                $ret .= '<div class="flex-gallery-img">';
                 $ret .= $this->_image($img,$data);
                 $ret .= $this->_showname($img,$data);
                 $ret .= $this->_showtitle($img,$data);
-                $ret .= '</td>';
+                $ret .= '</div>';    // close IMG
+                $ret .= '</div>';    // close CELL
                 $i++;
-
-                // done with this row? cloase it
-                $close_tr = true;
-                if($i % $data['cols'] == 0){
-                    $ret .= '</tr>';
-                    $close_tr = false;
-                }
-
-                // close current page and table
-                if($data['paginate'] && ($i % $data['paginate'] == 0)){
-                    if ($close_tr){
-                        // add remaining empty cells
-                        while($i % $data['cols']){
-                            $ret .= '<td></td>';
-                            $i++;
-                        }
-                        $ret .= '</tr>';
-                    }
-                    $ret .= '</table>';
-                    $ret .= '</div>';
-                    $close_pg = false;
-                }
-
             }
-
-            if ($close_tr){
-                // add remaining empty cells
-                while($i % $data['cols']){
-                    $ret .= '<td></td>';
-                    $i++;
-                }
-                $ret .= '</tr>';
-            }
-
-            if(!$data['paginate']){
-                $ret .= '</table>';
-            }elseif ($close_pg){
-                $ret .= '</table>';
-                $ret .= '</div>';
-            }
-        }else{ // format as div sequence
-            $i = 0;
-            $close_pg = false;
-            foreach($files as $img){
-
-                if($data['paginate'] && ($i % $data['paginate'] == 0)){
-                     $ret .= '<div class="gallery_page gallery__'.$data['galid'].'" id="gallery__'.$data['galid'].'_'.(++$page).'">';
-                     $close_pg = true;
-                }
-
-                $ret .= '<div>';
-                $ret .= $this->_image($img,$data);
-                $ret .= $this->_showname($img,$data);
-                $ret .= $this->_showtitle($img,$data);
-                $ret .= '</div> ';
-
-                $i++;
-
-                if($data['paginate'] && ($i % $data['paginate'] == 0)){
-                    $ret .= '</div>';
-                    $close_pg = false;
-                }
-            }
-
-            if($close_pg) $ret .= '</div>';
-
-            $ret .= '<br style="clear:both" />';
         }
+        
+        $ret .= '</div>'; // close fley-gallery
 
-        // pagination links
-        $pgret = '';
-        if($page){
-            $pgret .= '<div class="gallery_pages"><span>'.$this->getLang('pages').' </span>';
-            for($j=1; $j<=$page; $j++){
-                $pgret .= '<a href="#gallery__'.$data['galid'].'_'.$j.'" class="gallery_pgsel button">'.$j.'</a> ';
-            }
-            $pgret .= '</div>';
-        }
-
-        return '<div class="gallery'.$align.'"'.$xalign.'>'.$pgret.$ret.'<div class="clearer"></div></div>';
-    }
-
+        return $ret.'<div class="clearer"></div>';
+    } 
+   
     /**
      * Defines how a thumbnail should look like
      */
@@ -512,13 +395,14 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
             $dim = array('w'=>$w,'h'=>$h);
         }
 
+
         //prepare img attributes
         $i             = array();
         $i['width']    = $w;
         $i['height']   = $h;
         $i['border']   = 0;
         $i['alt']      = $this->_meta($img,'title');
-        $i['class']    = 'tn';
+        // $i['class']    = 'tn';
         $iatt = buildAttributes($i);
         $src  = ml($img['id'],$dim);
 
@@ -617,8 +501,6 @@ class syntax_plugin_gallery extends DokuWiki_Syntax_Plugin {
                     return $img['meta']->getField('File.Width');
                 case 'height':
                     return $img['meta']->getField('File.Height');
-
-
                 default:
                     return '';
             }
