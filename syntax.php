@@ -350,21 +350,20 @@ class syntax_plugin_flexgallery extends DokuWiki_Syntax_Plugin {
         foreach($files as $img){
             if ($i == 0) {
                 $ret .= '<div class="flex-gallery">';  // start Table
-                $i++;
-            } else {
-                $ret .= '<div class="flex-gallery-cell">';   // start image cell
-                $ret .= '<div class="flex-gallery-img">';
-                $ret .= $this->_image($img,$data);
-                $ret .= $this->_showname($img,$data);
-                $ret .= $this->_showtitle($img,$data);
-                $ret .= '</div>';    // close IMG
-                $ret .= '</div>';    // close CELL
-                $i++;
             }
+            
+            $ret .= '<div class="flex-gallery-cell">';   // start image cell
+            $ret .= '<div class="flex-gallery-img">';
+            $ret .= $this->_image($img,$data
+            $ret .= $this->_showname($img,$data);
+            $ret .= $this->_showtitle($img,$data);
+            $ret .= '</div>';    // close IMG
+            $ret .= '</div>';    // close CELL
+            $i++;
+ 
         }
         
         $ret .= '</div>'; // close fley-gallery
-
         return $ret.'<div class="clearer"></div>';
     } 
    
